@@ -40,11 +40,13 @@ spec:
           value: "{{ .Values.mqt_keda.connector_images.aws_sqs.image }}:{{ .Values.mqt_keda.connector_images.aws_sqs.tag }}"
         - name: STAN_IMAGE
           value: "{{ .Values.mqt_keda.connector_images.nats_steaming.image }}:{{ .Values.mqt_keda.connector_images.nats_steaming.tag }}"
+        - name: NATS-JETSTREAM_IMAGE
+          value: "{{ .Values.mqt_keda.connector_images.nats_jetstream.image }}:{{ .Values.mqt_keda.connector_images.nats_jetstream.tag }}"
         - name: GCP-PUBSUB_IMAGE
           value: "{{ .Values.mqt_keda.connector_images.gcp_pubsub.image }}:{{ .Values.mqt_keda.connector_images.gcp_pubsub.tag }}"
         - name: REDIS_IMAGE
           value: "{{ .Values.mqt_keda.connector_images.redis.image }}:{{ .Values.mqt_keda.connector_images.redis.tag }}"
-        {{- include "opentracing.envs" . | indent 8 }}
+        {{- include "fission-resource-namespace.envs" . | indent 8 }}
         {{- include "opentelemtry.envs" . | indent 8 }}
         resources:
           {{- toYaml .Values.mqt_keda.resources | nindent 10 }}
@@ -54,7 +56,7 @@ spec:
         {{- if .Values.terminationMessagePolicy }}
         terminationMessagePolicy: {{ .Values.terminationMessagePolicy }}
         {{- end }}
-      serviceAccountName: fission-svc
+      serviceAccountName: fission-keda
 {{- if .Values.priorityClassName }}
       priorityClassName: {{ .Values.priorityClassName }}
 {{- end }}

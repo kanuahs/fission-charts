@@ -72,11 +72,34 @@ This template generates the image name for the deployment depending on the value
   value: "{{ .Values.openTelemetry.propagators }}"
 {{- end }}
 
-{{- define "opentracing.envs" }}
-- name: OPENTRACING_ENABLED
-  value: {{ .Values.openTracing.enabled | default false | quote }}
-- name: TRACE_JAEGER_COLLECTOR_ENDPOINT
-  value: "{{ .Values.openTracing.collectorEndpoint }}"
-- name: TRACING_SAMPLING_RATE
-  value: {{ .Values.openTracing.samplingRate | default "0.5" | quote }}
+{{- define "fission-resource-namespace.envs" }}
+- name: FISSION_RESOURCE_NAMESPACES
+{{- if not .Values.singleDefaultNamespace }}
+  value: "{{ .Values.defaultNamespace }},{{ join "," .Values.additionalFissionNamespaces }}"
+{{- else }}
+  value: {{ .Values.defaultNamespace }}  
 {{- end }}
+{{- end }}
+
+{{/*
+Define the svc's name
+*/}}
+{{- define "fission-webhook.svc" -}}
+{{- printf "webhook-service" -}}
+{{- end -}}
+
+{{- define "fission-function-ns" -}}
+{{- if .Values.functionNamespace -}}
+{{- printf "%s" .Values.functionNamespace -}}
+{{- else -}}
+{{- printf "%s" .Values.defaultNamespace -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "fission-builder-ns" -}}
+{{- if .Values.builderNamespace -}}
+{{- printf "%s" .Values.builderNamespace -}}
+{{- else -}}
+{{- printf "%s" .Values.builderNamespace -}}
+{{- end -}}
+{{- end -}}
